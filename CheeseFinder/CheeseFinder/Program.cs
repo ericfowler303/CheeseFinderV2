@@ -184,7 +184,7 @@ namespace CheeseFinder
     {
         public enum PointStatus
         {
-            Empty, Cheese, Mouse
+            Empty, Cheese, Mouse, Cat, CatAndCheese
         }
         public int XCord { get; set; }
         public int YCord { get; set; }
