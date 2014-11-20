@@ -53,17 +53,49 @@ namespace CheeseFinder
 
         private void PlaceCheese()
         {
-            // Make the Cheese and randomly place on the grid
+            PlaceThing(Point.PointStatus.Cheese);
+        }
+
+        public void PlaceCat()
+        {
+            PlaceThing(Point.PointStatus.Cat);
+        }
+
+        public void PlaceThing(Point.PointStatus thingToPlace)
+        {
             int cX;
             int cY;
             do
             {
                 cX = rng.Next(0, grid.GetLength(0));
                 cY = rng.Next(0, grid.GetLength(1));
-            } while (grid[cX, cY].Status == Point.PointStatus.Mouse);
-            // Found X,Y Coords without a mouse
-            grid[cX, cY].Status = Point.PointStatus.Cheese;
-            Cheese = grid[cX, cY];
+            } while (grid[cX, cY].Status != Point.PointStatus.Empty);
+            // Found an empty point, place this type of object in the new place
+            switch (thingToPlace)
+            {
+                case Point.PointStatus.Cheese:
+                    grid[cX, cY].Status = Point.PointStatus.Cheese;
+                    break;
+                case Point.PointStatus.Cat:
+                    if (CheeseCount < 5)
+                    {
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); break;
+                    } else if ( rng.Next(0,101) < 21)
+                    {
+                        // 20% chance of Tigers
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Tiger); break;
+                    }
+
+                    if (rng.Next(0, 101) < 31)
+                    {   // 30% chance of kitten after the first two cats
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); break;
+                    }
+                    else
+                    {   // 70% chance of housecat after the first two cats
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.HouseCat); break;
+                    }
+            }
+
         }
 
         public void PlayGame()
@@ -196,6 +228,9 @@ namespace CheeseFinder
                 MoveMouseObject(x, y);
                 // Place a new cheese
                 PlaceCheese();
+
+                if (CheeseCount % 2 == 0) { } // TODO addCat
+
                 return true; 
             }
         }
