@@ -21,7 +21,7 @@ namespace CheeseFinder
     {
         Random rng = new Random();
         Point[,] grid;
-        public Point Mouse { get; set; }
+        public Mouse Mouse { get; set; }
         public Point Cheese { get; set; }
         public int Round { get; set; }
 
@@ -30,7 +30,7 @@ namespace CheeseFinder
             /// Initalize the grid
             grid = new Point[10, 10];
 
-            // Fill up the grid with PointStatus.Empty Points
+            // Fill up the grid with Point.PointStatus.Empty Points
             for (int y = 0; y < grid.GetLength(1); y++)
             {
                 for (int x = 0; x < grid.GetLength(0); x++)
@@ -42,8 +42,8 @@ namespace CheeseFinder
             // Make the Mouse and randomly place on the grid
             int mX = rng.Next(0, grid.GetLength(0));
             int mY = rng.Next(0, grid.GetLength(1));
-            grid[mX, mY].Status = Point.PointStatus.Mouse;
-            Mouse = grid[mX, mY];
+            grid[mX, mY] = new Mouse(mX, mY);
+            if (grid[mX, mY] is Mouse) { Mouse = (Mouse)grid[mX, mY]; }
 
             // Make the Cheese and randomly place on the grid
             int cX;
@@ -168,39 +168,40 @@ namespace CheeseFinder
             if (grid[x, y].Status != Point.PointStatus.Cheese)
             {
                 // No cheese found
-                grid[Mouse.XCord, Mouse.YCord].Status = Point.PointStatus.Empty; // Get rid of mouse
-                grid[x, y].Status = Point.PointStatus.Mouse; // Move mouse to new place
-                Mouse = grid[x, y]; // Update the Mouse property
+                grid[Mouse.XCord, Mouse.YCord] = new Point(x,y); // Get rid of mouse
+                Mouse.XCord = x; // update x coord
+                Mouse.YCord = y; // update y coord
+                grid[x, y] =  Mouse; // Move mouse to new place
                 return false;
             }
             else { return true; } // Cheese found
         }
     }
 
-    class Cat
+    class Cat : Point
     {
-        public Point Position { get; set; }
-        enum CatType
+        public enum CatType
         {
             Kitten, HouseCat, Tiger
-        }
+        }        
         public CatType Type { get; set; }
-        public Cat(CatType typeOfCat)
+        public Cat(int x, int y, CatType typeOfCat) : base(x,y)
         {
+            this.Status = PointStatus.Cat;
             this.Type = typeOfCat;
         }
     }
 
-    class Mouse
+    class Mouse : Point
     {
-        public Point Position { get; set; }
         public int Energy { get; set; }
         public bool hasBeenPouncedOn { get; set; }
         /// <summary>
         /// Create a Mouse with an Energy off 50
         /// </summary>
-        public Mouse()
+        public Mouse(int x, int y) : base(x,y)
         {
+            this.Status = PointStatus.Mouse;
             this.Energy = 50;
             this.hasBeenPouncedOn = false;
         }
@@ -217,21 +218,13 @@ namespace CheeseFinder
         }
         public int XCord { get; set; }
         public int YCord { get; set; }
-        private PointStatus _pointStatus;
-
-        public PointStatus Status
-        {
-            get { return _pointStatus; }
-            set { _pointStatus = value; }
-        }
-
-        public Point(int x, int y)
-        {
+        public PointStatus Status { get; set; }
+        public Point (int x, int y) {
             this.XCord = x;
             this.YCord = y;
             this.Status = PointStatus.Empty;
         }
-        
-    }
+   
+    }    
 }
 
