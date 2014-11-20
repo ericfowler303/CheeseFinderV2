@@ -1,0 +1,6 @@
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\bin\Debug\CheeseFinder.exe.config
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\bin\Debug\CheeseFinder.exe
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\bin\Debug\CheeseFinder.pdb
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\obj\Debug\CheeseFinder.csprojResolveAssemblyReference.cache
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\obj\Debug\CheeseFinder.exe
+C:\Users\Technologist\Documents\GitHub\CheeseFinder\CheeseFinder\CheeseFinder\obj\Debug\CheeseFinder.pdb
