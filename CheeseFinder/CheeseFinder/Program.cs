@@ -177,16 +177,35 @@ namespace CheeseFinder
         /// <returns>true if cheese is found</returns>
         private bool HasCheese(int x, int y)
         {
+            // Decrease the energy on every move
+            Mouse.Energy--;
+
             if (grid[x, y].Status != Point.PointStatus.Cheese)
             {
                 // No cheese found
-                grid[Mouse.XCord, Mouse.YCord] = new Point(x,y); // Get rid of mouse
-                Mouse.XCord = x; // update x coord
-                Mouse.YCord = y; // update y coord
-                grid[x, y] =  Mouse; // Move mouse to new place
+                MoveMouseObject(x, y);
                 return false;
             }
-            else { return true; } // Cheese found
+            else 
+            {
+                // Cheese found
+                CheeseCount++;
+                // Remove the found cheese
+                grid[x, y].Status = Point.PointStatus.Empty;
+                // Move the mouse to it's new position
+                MoveMouseObject(x, y);
+                // Place a new cheese
+                PlaceCheese();
+                return true; 
+            }
+        }
+
+        private void MoveMouseObject(int x, int y)
+        {
+            grid[Mouse.XCord, Mouse.YCord] = new Point(x, y); // Get rid of mouse
+            Mouse.XCord = x; // update x coord
+            Mouse.YCord = y; // update y coord
+            grid[x, y] = Mouse; // Move mouse to new place
         }
     }
 
