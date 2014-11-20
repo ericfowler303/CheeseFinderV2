@@ -177,6 +177,35 @@ namespace CheeseFinder
         }
     }
 
+    class Cat
+    {
+        public Point Position { get; set; }
+        enum CatType
+        {
+            Kitten, HouseCat, Tiger
+        }
+        public CatType Type { get; set; }
+        public Cat(CatType typeOfCat)
+        {
+            this.Type = typeOfCat;
+        }
+    }
+
+    class Mouse
+    {
+        public Point Position { get; set; }
+        public int Energy { get; set; }
+        public bool hasBeenPouncedOn { get; set; }
+        /// <summary>
+        /// Create a Mouse with an Energy off 50
+        /// </summary>
+        public Mouse()
+        {
+            this.Energy = 50;
+            this.hasBeenPouncedOn = false;
+        }
+    }
+
     /// <summary>
     /// Class representing the status of a certain point on the grid
     /// </summary>
