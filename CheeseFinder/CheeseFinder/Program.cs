@@ -50,18 +50,25 @@ namespace CheeseFinder
             // Randomly place the cheese
             PlaceCheese();
         }
+        /// <summary>
+        /// Add a Cat to the lazycats list
+        /// </summary>
+        public void AddCat()
+        {
+            lazyCats.Add(PlaceCat());
+        }
 
-        private void PlaceCheese()
+        public void PlaceCheese()
         {
             PlaceThing(Point.PointStatus.Cheese);
         }
 
-        public void PlaceCat()
+        public Cat PlaceCat()
         {
-            PlaceThing(Point.PointStatus.Cat);
+            return (Cat)PlaceThing(Point.PointStatus.Cat);
         }
 
-        public void PlaceThing(Point.PointStatus thingToPlace)
+        private Point PlaceThing(Point.PointStatus thingToPlace)
         {
             int cX;
             int cY;
@@ -74,28 +81,27 @@ namespace CheeseFinder
             switch (thingToPlace)
             {
                 case Point.PointStatus.Cheese:
-                    grid[cX, cY].Status = Point.PointStatus.Cheese;
-                    break;
+                    grid[cX, cY].Status = Point.PointStatus.Cheese; return grid[cX, cY];
                 case Point.PointStatus.Cat:
                     if (CheeseCount < 5)
                     {
-                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); break;
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); return grid[cX, cY];
                     } else if ( rng.Next(0,101) < 21)
                     {
                         // 20% chance of Tigers
-                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Tiger); break;
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Tiger); return grid[cX, cY];
                     }
 
                     if (rng.Next(0, 101) < 31)
                     {   // 30% chance of kitten after the first two cats
-                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); break;
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); return grid[cX, cY];
                     }
                     else
                     {   // 70% chance of housecat after the first two cats
-                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.HouseCat); break;
+                        grid[cX, cY] = new Cat(cX, cY, Cat.CatType.HouseCat); return grid[cX, cY];
                     }
             }
-
+            return grid[cX, cY];
         }
 
         public void PlayGame()
@@ -229,7 +235,7 @@ namespace CheeseFinder
                 // Place a new cheese
                 PlaceCheese();
 
-                if (CheeseCount % 2 == 0) { } // TODO addCat
+                if (CheeseCount % 2 == 0) { AddCat(); } // TODO addCat
 
                 return true; 
             }
