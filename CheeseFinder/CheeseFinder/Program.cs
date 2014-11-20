@@ -23,7 +23,9 @@ namespace CheeseFinder
         Point[,] grid;
         public Mouse Mouse { get; set; }
         public Point Cheese { get; set; }
+        public int CheeseCount { get; set; }
         public int Round { get; set; }
+        List<Cat> lazyCats = new List<Cat>();
 
         public CheeseFinder()
         {
@@ -45,13 +47,20 @@ namespace CheeseFinder
             grid[mX, mY] = new Mouse(mX, mY);
             if (grid[mX, mY] is Mouse) { Mouse = (Mouse)grid[mX, mY]; }
 
+            // Randomly place the cheese
+            PlaceCheese();
+        }
+
+        private void PlaceCheese()
+        {
             // Make the Cheese and randomly place on the grid
             int cX;
             int cY;
-            do {
+            do
+            {
                 cX = rng.Next(0, grid.GetLength(0));
                 cY = rng.Next(0, grid.GetLength(1));
-            } while (grid[cX,cY].Status == Point.PointStatus.Mouse);
+            } while (grid[cX, cY].Status == Point.PointStatus.Mouse);
             // Found X,Y Coords without a mouse
             grid[cX, cY].Status = Point.PointStatus.Cheese;
             Cheese = grid[cX, cY];
@@ -86,6 +95,9 @@ namespace CheeseFinder
                             break;
                         case Point.PointStatus.Mouse: Console.Write("[M]");
                             break;
+                        case Point.PointStatus.Cat:
+                        case Point.PointStatus.CatAndCheese: Console.WriteLine("[X]");
+                            break;
                     }
                 }
                 // Write a new line at the end of the row
@@ -118,9 +130,9 @@ namespace CheeseFinder
         {
             switch (userKey)
             {
-                case ConsoleKey.DownArrow: return this.Mouse.YCord < 9;
+                case ConsoleKey.DownArrow: return this.Mouse.YCord < grid.GetLength(1)-1;
                 case ConsoleKey.LeftArrow: return this.Mouse.XCord > 0;
-                case ConsoleKey.RightArrow: return this.Mouse.XCord < 9;
+                case ConsoleKey.RightArrow: return this.Mouse.XCord < grid.GetLength(0)-1;
                 case ConsoleKey.UpArrow: return this.Mouse.YCord > 0;
             }
             // User pressed the wrong key so that's never a valid move
