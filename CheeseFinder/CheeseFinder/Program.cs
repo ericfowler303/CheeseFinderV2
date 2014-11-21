@@ -50,6 +50,34 @@ namespace CheeseFinder
             // Randomly place the cheese
             PlaceCheese();
         }
+
+        public void MoveCat(Cat theCat)
+        {
+            // Based on the type of cat, the move chance is different
+            // Tiger has 99% chance
+            // Housecat has a 70% chance
+            // The distracted kitten has a 25% chance
+            switch (theCat.Type)
+            {
+                case Cat.CatType.Kitten: if (rng.Next(0, 101) < 26) { MoveCatObj(theCat); }
+                    break;
+                case Cat.CatType.HouseCat: if (rng.Next(0, 101) < 71) { MoveCatObj(theCat); }
+                    break;
+                case Cat.CatType.Tiger: if (rng.Next(0, 101) < 99) { MoveCatObj(theCat);}
+                    break;
+            }
+        }
+
+        public void MoveCatObj(Cat theCat)
+        {
+
+        }
+
+        public bool IsValidCatMove(Point targetPosition)
+        {
+            return targetPosition.Status == Point.PointStatus.Empty || targetPosition.Status == Point.PointStatus.Mouse;
+        }
+
         /// <summary>
         /// Add a Cat to the lazycats list
         /// </summary>
