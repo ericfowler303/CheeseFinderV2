@@ -56,10 +56,10 @@ namespace CheeseFinder
             // Based on the type of cat, the move chance is different
             // Tiger has 99% chance
             // Housecat has a 70% chance
-            // The distracted kitten has a 25% chance
+            // The distracted kitten has a 40% chance
             switch (theCat.Type)
             {
-                case Cat.CatType.Kitten: if (rng.Next(0, 101) < 26) { MoveCatObj(theCat); }
+                case Cat.CatType.Kitten: if (rng.Next(0, 101) < 41) { MoveCatObj(theCat); }
                     break;
                 case Cat.CatType.HouseCat: if (rng.Next(0, 101) < 71) { MoveCatObj(theCat); }
                     break;
