@@ -67,12 +67,53 @@ namespace CheeseFinder
                     break;
             }
         }
-
+        /// <summary>
+        /// A method that does basic pathfinding to move the cat
+        /// in the direction of the mouse
+        /// </summary>
+        /// <param name="theCat">the cat object to be evaluated</param>
         public void MoveCatObj(Cat theCat)
         {
+            // Get the relative position of the mouse
+            int xDiff = this.Mouse.XCord - theCat.XCord;
+            int yDiff = this.Mouse.YCord - theCat.YCord;
+            bool tryLeft = xDiff < 0;
+            bool tryRight = xDiff > 0;
+            bool tryUp = yDiff < 0;
+            bool tryDown = yDiff > 0;
+            Point targetPosition = theCat;
+            bool validMove = false;
+
+            while (!validMove && (tryLeft || tryRight || tryUp || tryDown))
+            {
+                // try diagonal moves first
+                if (tryUp && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord - 1)) { targetPosition.XCord++; targetPosition.YCord--; validMove = true; } }
+                if (tryDown && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord + 1)) { targetPosition.XCord++; targetPosition.YCord++; validMove = true; } }
+                if (tryDown && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord + 1)) { targetPosition.XCord--; targetPosition.YCord++; validMove = true; } }
+                if (tryUp && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord - 1)) { targetPosition.XCord--; targetPosition.YCord--; validMove = true; } }
+
+                // Try a direction if we can't get a more efficent diagonal move
+
+            }
+
+            // A valid move was found
+
 
         }
-
+        /// <summary>
+        /// A quick function to tell if a move will be
+        /// within the board geometry
+        /// </summary>
+        /// <param name="x">future x position</param>
+        /// <param name="y">future y position</param>
+        /// <returns></returns>
+        public bool IsMoveOnBoard(int x, int y)
+        {
+            if (x < 0 || y < 0) { return false; }
+            if (x > this.grid.GetLength(0) || y > this.grid.GetLength(1)) { return false; }
+            // If it's on the board, check if it's a valid move for the cat
+            return IsValidCatMove(grid[x,y]);
+        }
         public bool IsValidCatMove(Point targetPosition)
         {
             return targetPosition.Status == Point.PointStatus.Empty || targetPosition.Status == Point.PointStatus.Mouse;
