@@ -93,10 +93,25 @@ namespace CheeseFinder
                 if (tryUp && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord - 1)) { targetPosition.XCord--; targetPosition.YCord--; validMove = true; } }
 
                 // Try a direction if we can't get a more efficent diagonal move
+                if (tryUp && !validMove) { if (IsMoveOnBoard(targetPosition.XCord, targetPosition.YCord - 1)) { targetPosition.YCord--; validMove = true; } }
+                if (tryDown && !validMove) { if (IsMoveOnBoard(targetPosition.XCord, targetPosition.YCord +1)) { targetPosition.YCord++; validMove = true; } }
+                if (tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord+1, targetPosition.YCord)) { targetPosition.XCord++; validMove = true; } }
+                if (tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord-1, targetPosition.YCord)) { targetPosition.XCord--; validMove = true; } }
 
             }
 
             // A valid move was found
+
+            // Clear the old cat point
+            if (grid[theCat.XCord, theCat.YCord].Status == Point.PointStatus.CatAndCheese)
+            {// set old spot back to cheese
+                grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
+                grid[theCat.XCord, theCat.YCord].Status = Point.PointStatus.Cheese;
+            }
+            else
+            {// set old spot back to empty
+                grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
+            }
 
 
         }
