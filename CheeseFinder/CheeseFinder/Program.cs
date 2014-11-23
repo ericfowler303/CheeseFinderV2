@@ -286,6 +286,8 @@ namespace CheeseFinder
                 // Write a new line at the end of the row
                 Console.Write("\n");
             }
+            // Display the mouse energy status at the bottom
+            Console.WriteLine("Current mouse energy: {0}", this.Mouse.Energy);
         }
 
         public ConsoleKey GetUserMove()
@@ -380,7 +382,7 @@ namespace CheeseFinder
                 // Cheese found
                 CheeseCount++;
                 // Give the mouse some energy for eating the cheese
-                this.Mouse.Energy += 20;
+                this.Mouse.Energy += 8;
                 // Remove the found cheese
                 grid[x, y].Status = Point.PointStatus.Empty;
                 // Move the mouse to it's new position
