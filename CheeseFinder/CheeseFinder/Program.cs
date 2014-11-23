@@ -107,13 +107,30 @@ namespace CheeseFinder
             {// set old spot back to cheese
                 grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
                 grid[theCat.XCord, theCat.YCord].Status = Point.PointStatus.Cheese;
+                // Set the cat back to just cat
+                targetPosition.Status = Point.PointStatus.Cat;
             }
             else
             {// set old spot back to empty
                 grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
             }
 
-
+            // Check where the new move position is going to be
+            if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Mouse)
+            {// Totally found the mouse
+                this.Mouse.hasBeenPouncedOn = true;
+                // The square should now hold the cat
+                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+            }
+            else if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Cheese)
+            {// The cat is moving onto a cheese position
+                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                grid[targetPosition.XCord, targetPosition.YCord].Status = Point.PointStatus.CatAndCheese;
+            }
+            else
+            { // Moved to an empty space
+                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+            }
         }
         /// <summary>
         /// A quick function to tell if a move will be
