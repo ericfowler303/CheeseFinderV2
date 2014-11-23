@@ -81,7 +81,7 @@ namespace CheeseFinder
             bool tryRight = xDiff > 0;
             bool tryUp = yDiff < 0;
             bool tryDown = yDiff > 0;
-            Point targetPosition = theCat;
+            Point targetPosition = (Cat)theCat.Clone();
             bool validMove = false;
 
             while (!validMove && (tryLeft || tryRight || tryUp || tryDown))
@@ -121,15 +121,21 @@ namespace CheeseFinder
                 this.Mouse.hasBeenPouncedOn = true;
                 // The square should now hold the cat
                 grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                lazyCats.Remove(theCat);
+                lazyCats.Add((Cat)targetPosition);
             }
             else if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Cheese)
             {// The cat is moving onto a cheese position
                 grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
                 grid[targetPosition.XCord, targetPosition.YCord].Status = Point.PointStatus.CatAndCheese;
+                lazyCats.Remove(theCat);
+                lazyCats.Add((Cat)targetPosition);
             }
             else
             { // Moved to an empty space
                 grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                lazyCats.Remove(theCat);
+                lazyCats.Add((Cat)targetPosition);
             }
         }
         /// <summary>
@@ -212,9 +218,9 @@ namespace CheeseFinder
                 this.DrawGrid();
                 this.MoveMouse(this.GetUserMove());
                 // Move all of the existing cats
-                foreach (Cat aCat in lazyCats)
+                for (int i = 0; i < lazyCats.Count();i++)
                 {
-                    this.MoveCat(aCat);
+                    this.MoveCat(lazyCats[i]);
                 }
                 this.Round++;
             }
@@ -355,7 +361,7 @@ namespace CheeseFinder
         }
     }
 
-    class Cat : Point
+    class Cat : Point, ICloneable
     {
         public enum CatType
         {
@@ -366,6 +372,11 @@ namespace CheeseFinder
         {
             this.Status = PointStatus.Cat;
             this.Type = typeOfCat;
+        }
+        // Needed to do a deep clone instead of a shallow clone
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 
