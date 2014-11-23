@@ -229,7 +229,9 @@ namespace CheeseFinder
             }
             this.DrawGrid();
             // Display the results of the game
-            Console.WriteLine("You lasted {0} rounds before getting caught by a cat.", this.Round);
+            if (this.Mouse.Energy == 0) { Console.WriteLine("You ran out of energy"); }
+            else
+            { Console.WriteLine("You lasted {0} rounds before getting caught by a cat.", this.Round);}
             Console.ReadLine();
         }
 
@@ -357,6 +359,8 @@ namespace CheeseFinder
             {
                 // Cheese found
                 CheeseCount++;
+                // Give the mouse some energy for eating the cheese
+                this.Mouse.Energy += 20;
                 // Remove the found cheese
                 grid[x, y].Status = Point.PointStatus.Empty;
                 // Move the mouse to it's new position
