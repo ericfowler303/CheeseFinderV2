@@ -207,15 +207,19 @@ namespace CheeseFinder
 
         public void PlayGame()
         {
-            bool hasCheeseBeenFound = false;
-
-            while (!hasCheeseBeenFound)
+            while (this.Mouse.Energy > 0 && !this.Mouse.hasBeenPouncedOn)
             {
                 this.DrawGrid();
-                hasCheeseBeenFound = this.MoveMouse(this.GetUserMove());
+                this.MoveMouse(this.GetUserMove());
+                // Move all of the existing cats
+                foreach (Cat aCat in lazyCats)
+                {
+                    this.MoveCat(aCat);
+                }
                 this.Round++;
             }
-            Console.WriteLine("You found the cheese, it only took {0} rounds", this.Round);
+            // Display the results of the game
+            Console.WriteLine("You lasted {0} rounds before getting caught by a cat.", this.Round);
             Console.ReadLine();
         }
 
@@ -234,8 +238,8 @@ namespace CheeseFinder
                             break;
                         case Point.PointStatus.Mouse: Console.Write("[M]");
                             break;
-                        case Point.PointStatus.Cat:
-                        case Point.PointStatus.CatAndCheese: Console.WriteLine("[X]");
+                        case Point.PointStatus.Cat: Console.Write("[@]"); break;
+                        case Point.PointStatus.CatAndCheese: Console.Write("[X]");
                             break;
                     }
                 }
