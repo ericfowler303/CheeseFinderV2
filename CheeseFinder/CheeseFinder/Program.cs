@@ -156,7 +156,7 @@ namespace CheeseFinder
         }
         public bool IsValidCatMove(Point targetPosition)
         {
-            return targetPosition.Status == Point.PointStatus.Empty || targetPosition.Status == Point.PointStatus.Mouse;
+            return targetPosition.Status == Point.PointStatus.Empty || targetPosition.Status == Point.PointStatus.Mouse || targetPosition.Status == Point.PointStatus.Cheese;
         }
 
         /// <summary>
