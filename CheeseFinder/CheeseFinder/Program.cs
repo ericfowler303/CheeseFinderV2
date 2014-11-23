@@ -224,6 +224,7 @@ namespace CheeseFinder
                 }
                 this.Round++;
             }
+            this.DrawGrid();
             // Display the results of the game
             Console.WriteLine("You lasted {0} rounds before getting caught by a cat.", this.Round);
             Console.ReadLine();
