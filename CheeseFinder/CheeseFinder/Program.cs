@@ -244,12 +244,26 @@ namespace CheeseFinder
                     {
                         case Point.PointStatus.Empty: Console.Write("[ ]");
                             break;
-                        case Point.PointStatus.Cheese: Console.Write("[C]");
+                        case Point.PointStatus.Cheese:
+                            Console.BackgroundColor = ConsoleColor.Yellow; Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write("[C]"); Console.ResetColor();
                             break;
                         case Point.PointStatus.Mouse: Console.Write("[M]");
                             break;
-                        case Point.PointStatus.Cat: Console.Write("[@]"); break;
-                        case Point.PointStatus.CatAndCheese: Console.Write("[X]");
+                        case Point.PointStatus.Cat: Console.Write("[");
+                            // Set a different color for a cat based on the difficulty of the cat
+                            // kitten = green, housecat = yellow, tiger= red
+                            Cat tempCat = (Cat)grid[x, y];
+                            switch (tempCat.Type)
+                            {
+                                case Cat.CatType.Kitten: Console.ForegroundColor = ConsoleColor.Green; Console.Write("@"); break;
+                                case Cat.CatType.HouseCat: Console.ForegroundColor = ConsoleColor.DarkYellow; Console.Write("@"); break;
+                                case Cat.CatType.Tiger: Console.ForegroundColor = ConsoleColor.Red; Console.Write("@"); break;
+                            }
+                            Console.ResetColor();
+                            Console.Write("]");
+                            break;
+                        case Point.PointStatus.CatAndCheese: Console.Write("[X]"); 
                             break;
                     }
                 }
