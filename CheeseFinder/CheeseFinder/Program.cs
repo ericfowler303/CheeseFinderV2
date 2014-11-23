@@ -14,7 +14,7 @@ namespace CheeseFinder
             game.PlayGame();
         }
 
-        
+
     }
 
     class CheeseFinder
@@ -63,7 +63,7 @@ namespace CheeseFinder
                     break;
                 case Cat.CatType.HouseCat: if (rng.Next(0, 101) < 71) { MoveCatObj(theCat); }
                     break;
-                case Cat.CatType.Tiger: if (rng.Next(0, 101) < 99) { MoveCatObj(theCat);}
+                case Cat.CatType.Tiger: if (rng.Next(0, 101) < 99) { MoveCatObj(theCat); }
                     break;
             }
         }
@@ -86,17 +86,19 @@ namespace CheeseFinder
 
             while (!validMove && (tryLeft || tryRight || tryUp || tryDown))
             {
-                // try diagonal moves first
-                if (tryUp && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord - 1)) { targetPosition.XCord++; targetPosition.YCord--; validMove = true; } }
-                if (tryDown && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord + 1)) { targetPosition.XCord++; targetPosition.YCord++; validMove = true; } }
-                if (tryDown && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord + 1)) { targetPosition.XCord--; targetPosition.YCord++; validMove = true; } }
-                if (tryUp && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord - 1)) { targetPosition.XCord--; targetPosition.YCord--; validMove = true; } }
-
+                // try diagonal moves first, but kitten can't do it because it's dumb
+                if (theCat.Type != Cat.CatType.Kitten)
+                {
+                    if (tryUp && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord - 1)) { targetPosition.XCord++; targetPosition.YCord--; validMove = true; } }
+                    if (tryDown && tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord + 1)) { targetPosition.XCord++; targetPosition.YCord++; validMove = true; } }
+                    if (tryDown && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord + 1)) { targetPosition.XCord--; targetPosition.YCord++; validMove = true; } }
+                    if (tryUp && tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord - 1)) { targetPosition.XCord--; targetPosition.YCord--; validMove = true; } }
+                }
                 // Try a direction if we can't get a more efficent diagonal move
                 if (tryUp && !validMove) { if (IsMoveOnBoard(targetPosition.XCord, targetPosition.YCord - 1)) { targetPosition.YCord--; validMove = true; } }
-                if (tryDown && !validMove) { if (IsMoveOnBoard(targetPosition.XCord, targetPosition.YCord +1)) { targetPosition.YCord++; validMove = true; } }
-                if (tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord+1, targetPosition.YCord)) { targetPosition.XCord++; validMove = true; } }
-                if (tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord-1, targetPosition.YCord)) { targetPosition.XCord--; validMove = true; } }
+                if (tryDown && !validMove) { if (IsMoveOnBoard(targetPosition.XCord, targetPosition.YCord + 1)) { targetPosition.YCord++; validMove = true; } }
+                if (tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord)) { targetPosition.XCord++; validMove = true; } }
+                if (tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord)) { targetPosition.XCord--; validMove = true; } }
 
             }
 
@@ -150,7 +152,7 @@ namespace CheeseFinder
             if (x < 0 || y < 0) { return false; }
             if (x > this.grid.GetLength(0) || y > this.grid.GetLength(1)) { return false; }
             // If it's on the board, check if it's a valid move for the cat
-            return IsValidCatMove(grid[x,y]);
+            return IsValidCatMove(grid[x, y]);
         }
         public bool IsValidCatMove(Point targetPosition)
         {
@@ -193,7 +195,8 @@ namespace CheeseFinder
                     if (CheeseCount < 5)
                     {
                         grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Kitten); return grid[cX, cY];
-                    } else if ( rng.Next(0,101) < 21)
+                    }
+                    else if (rng.Next(0, 101) < 21)
                     {
                         // 20% chance of Tigers
                         grid[cX, cY] = new Cat(cX, cY, Cat.CatType.Tiger); return grid[cX, cY];
@@ -218,7 +221,7 @@ namespace CheeseFinder
                 this.DrawGrid();
                 this.MoveMouse(this.GetUserMove());
                 // Move all of the existing cats
-                for (int i = 0; i < lazyCats.Count();i++)
+                for (int i = 0; i < lazyCats.Count(); i++)
                 {
                     this.MoveCat(lazyCats[i]);
                 }
@@ -237,7 +240,7 @@ namespace CheeseFinder
             {
                 for (int x = 0; x < grid.GetLength(0); x++)
                 {
-                    switch (grid[x,y].Status)
+                    switch (grid[x, y].Status)
                     {
                         case Point.PointStatus.Empty: Console.Write("[ ]");
                             break;
@@ -261,8 +264,8 @@ namespace CheeseFinder
             ConsoleKeyInfo userInput = Console.ReadKey();
             switch (userInput.Key)
             {
-                case ConsoleKey.DownArrow: 
-                case ConsoleKey.LeftArrow: 
+                case ConsoleKey.DownArrow:
+                case ConsoleKey.LeftArrow:
                 case ConsoleKey.RightArrow:
                 case ConsoleKey.UpArrow: return userInput.Key;
                 default:
@@ -280,9 +283,9 @@ namespace CheeseFinder
         {
             switch (userKey)
             {
-                case ConsoleKey.DownArrow: return this.Mouse.YCord < grid.GetLength(1)-1;
+                case ConsoleKey.DownArrow: return this.Mouse.YCord < grid.GetLength(1) - 1;
                 case ConsoleKey.LeftArrow: return this.Mouse.XCord > 0;
-                case ConsoleKey.RightArrow: return this.Mouse.XCord < grid.GetLength(0)-1;
+                case ConsoleKey.RightArrow: return this.Mouse.XCord < grid.GetLength(0) - 1;
                 case ConsoleKey.UpArrow: return this.Mouse.YCord > 0;
             }
             // User pressed the wrong key so that's never a valid move
@@ -336,7 +339,7 @@ namespace CheeseFinder
                 MoveMouseObject(x, y);
                 return false;
             }
-            else 
+            else
             {
                 // Cheese found
                 CheeseCount++;
@@ -349,7 +352,7 @@ namespace CheeseFinder
 
                 if (CheeseCount % 2 == 0) { AddCat(); } // TODO addCat
 
-                return true; 
+                return true;
             }
         }
 
@@ -367,9 +370,10 @@ namespace CheeseFinder
         public enum CatType
         {
             Kitten, HouseCat, Tiger
-        }        
+        }
         public CatType Type { get; set; }
-        public Cat(int x, int y, CatType typeOfCat) : base(x,y)
+        public Cat(int x, int y, CatType typeOfCat)
+            : base(x, y)
         {
             this.Status = PointStatus.Cat;
             this.Type = typeOfCat;
@@ -388,7 +392,8 @@ namespace CheeseFinder
         /// <summary>
         /// Create a Mouse with an Energy off 50
         /// </summary>
-        public Mouse(int x, int y) : base(x,y)
+        public Mouse(int x, int y)
+            : base(x, y)
         {
             this.Status = PointStatus.Mouse;
             this.Energy = 50;
@@ -408,12 +413,13 @@ namespace CheeseFinder
         public int XCord { get; set; }
         public int YCord { get; set; }
         public PointStatus Status { get; set; }
-        public Point (int x, int y) {
+        public Point(int x, int y)
+        {
             this.XCord = x;
             this.YCord = y;
             this.Status = PointStatus.Empty;
         }
-   
-    }    
+
+    }
 }
 
