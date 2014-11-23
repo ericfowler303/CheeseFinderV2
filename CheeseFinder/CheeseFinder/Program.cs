@@ -26,6 +26,7 @@ namespace CheeseFinder
         public int CheeseCount { get; set; }
         public int Round { get; set; }
         List<Cat> lazyCats = new List<Cat>();
+        bool nextMoveIsACat = false;
 
         public CheeseFinder()
         {
@@ -84,7 +85,7 @@ namespace CheeseFinder
             Point targetPosition = (Cat)theCat.Clone();
             bool validMove = false;
 
-            while (!validMove && (tryLeft || tryRight || tryUp || tryDown))
+            while ((!validMove|| nextMoveIsACat) && (tryLeft || tryRight || tryUp || tryDown))
             {
                 // try diagonal moves first, but kitten can't do it because it's dumb
                 if (theCat.Type != Cat.CatType.Kitten)
@@ -100,44 +101,48 @@ namespace CheeseFinder
                 if (tryRight && !validMove) { if (IsMoveOnBoard(targetPosition.XCord + 1, targetPosition.YCord)) { targetPosition.XCord++; validMove = true; } }
                 if (tryLeft && !validMove) { if (IsMoveOnBoard(targetPosition.XCord - 1, targetPosition.YCord)) { targetPosition.XCord--; validMove = true; } }
 
+                
             }
 
             // A valid move was found
 
-            // Clear the old cat point
-            if (grid[theCat.XCord, theCat.YCord].Status == Point.PointStatus.CatAndCheese)
-            {// set old spot back to cheese
-                grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
-                grid[theCat.XCord, theCat.YCord].Status = Point.PointStatus.Cheese;
-                // Set the cat back to just cat
-                targetPosition.Status = Point.PointStatus.Cat;
-            }
-            else
-            {// set old spot back to empty
-                grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
-            }
+            if (!nextMoveIsACat) // Only move if the next move isn't a cat
+            {
+                // Clear the old cat point
+                if (grid[theCat.XCord, theCat.YCord].Status == Point.PointStatus.CatAndCheese)
+                {// set old spot back to cheese
+                    grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
+                    grid[theCat.XCord, theCat.YCord].Status = Point.PointStatus.Cheese;
+                    // Set the cat back to just cat
+                    targetPosition.Status = Point.PointStatus.Cat;
+                }
+                else
+                {// set old spot back to empty
+                    grid[theCat.XCord, theCat.YCord] = new Point(theCat.XCord, theCat.YCord);
+                }
 
-            // Check where the new move position is going to be
-            if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Mouse)
-            {// Totally found the mouse
-                this.Mouse.hasBeenPouncedOn = true;
-                // The square should now hold the cat
-                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
-                lazyCats.Remove(theCat);
-                lazyCats.Add((Cat)targetPosition);
-            }
-            else if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Cheese)
-            {// The cat is moving onto a cheese position
-                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
-                grid[targetPosition.XCord, targetPosition.YCord].Status = Point.PointStatus.CatAndCheese;
-                lazyCats.Remove(theCat);
-                lazyCats.Add((Cat)targetPosition);
-            }
-            else
-            { // Moved to an empty space
-                grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
-                lazyCats.Remove(theCat);
-                lazyCats.Add((Cat)targetPosition);
+                // Check where the new move position is going to be
+                if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Mouse)
+                {// Totally found the mouse
+                    this.Mouse.hasBeenPouncedOn = true;
+                    // The square should now hold the cat
+                    grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                    lazyCats.Remove(theCat);
+                    lazyCats.Add((Cat)targetPosition);
+                }
+                else if (grid[targetPosition.XCord, targetPosition.YCord].Status == Point.PointStatus.Cheese)
+                {// The cat is moving onto a cheese position
+                    grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                    grid[targetPosition.XCord, targetPosition.YCord].Status = Point.PointStatus.CatAndCheese;
+                    lazyCats.Remove(theCat);
+                    lazyCats.Add((Cat)targetPosition);
+                }
+                else
+                { // Moved to an empty space
+                    grid[targetPosition.XCord, targetPosition.YCord] = targetPosition;
+                    lazyCats.Remove(theCat);
+                    lazyCats.Add((Cat)targetPosition);
+                }
             }
         }
         /// <summary>
@@ -152,11 +157,20 @@ namespace CheeseFinder
             if (x < 0 || y < 0) { return false; }
             if (x > this.grid.GetLength(0) || y > this.grid.GetLength(1)) { return false; }
             // If it's on the board, check if it's a valid move for the cat
+            if (IsNextMoveACat(grid[x, y]))
+            {
+                nextMoveIsACat = true; // Update if the next move is another cat, to avoid an infinite loop
+            } 
             return IsValidCatMove(grid[x, y]);
         }
         public bool IsValidCatMove(Point targetPosition)
         {
             return targetPosition.Status == Point.PointStatus.Empty || targetPosition.Status == Point.PointStatus.Mouse || targetPosition.Status == Point.PointStatus.Cheese;
+        }
+
+        public bool IsNextMoveACat(Point targetPosition)
+        {
+            return targetPosition.Status == Point.PointStatus.Cat || targetPosition.Status == Point.PointStatus.CatAndCheese;
         }
 
         /// <summary>
@@ -349,7 +363,13 @@ namespace CheeseFinder
             // Decrease the energy on every move
             Mouse.Energy--;
 
-            if (grid[x, y].Status != Point.PointStatus.Cheese)
+            if (grid[x, y].Status == Point.PointStatus.Cat || grid[x, y].Status == Point.PointStatus.CatAndCheese)
+            {
+                // if the mouse tries to move at the cat, he dies
+                this.Mouse.hasBeenPouncedOn = true;
+                return false;
+            }
+            else if (grid[x, y].Status != Point.PointStatus.Cheese)
             {
                 // No cheese found
                 MoveMouseObject(x, y);
@@ -368,7 +388,7 @@ namespace CheeseFinder
                 // Place a new cheese
                 PlaceCheese();
 
-                if (CheeseCount % 2 == 0) { AddCat(); } // TODO addCat
+                if (CheeseCount % 2 == 0) { AddCat(); }
 
                 return true;
             }
