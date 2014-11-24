@@ -85,7 +85,7 @@ namespace CheeseFinder
             Point targetPosition = (Cat)theCat.Clone();
             bool validMove = false;
 
-            while ((!validMove|| nextMoveIsACat) && (tryLeft || tryRight || tryUp || tryDown))
+            while (!validMove && !nextMoveIsACat && (tryLeft || tryRight || tryUp || tryDown))
             {
                 // try diagonal moves first, but kitten can't do it because it's dumb
                 if (theCat.Type != Cat.CatType.Kitten)
@@ -143,6 +143,11 @@ namespace CheeseFinder
                     lazyCats.Remove(theCat);
                     lazyCats.Add((Cat)targetPosition);
                 }
+            }
+            else
+            {
+                // Reset this for the next cats so they can move
+                nextMoveIsACat = false;
             }
         }
         /// <summary>
@@ -382,7 +387,7 @@ namespace CheeseFinder
                 // Cheese found
                 CheeseCount++;
                 // Give the mouse some energy for eating the cheese
-                this.Mouse.Energy += 8;
+                this.Mouse.Energy += 10;
                 // Remove the found cheese
                 grid[x, y].Status = Point.PointStatus.Empty;
                 // Move the mouse to it's new position
